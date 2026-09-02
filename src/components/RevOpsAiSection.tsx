@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { AI_ACCELERATED_TASKS, HUMAN_COMMERCIAL_JUDGMENT } from '../data/content';
-import { Bot, UserCheck2, Cpu, Sparkles, ArrowRight, Layers, Database, ShieldCheck, Activity } from 'lucide-react';
+import { AI_ACCELERATED_TASKS } from '../data/content';
+import { Bot, UserCheck2, Sparkles, ArrowRight, Database, Activity } from 'lucide-react';
+import { GlassTooltip } from './GlassTooltip';
 
 const REVOPS_ANIMATION_STAGES = [
   {
@@ -43,6 +44,260 @@ const REVOPS_ANIMATION_STAGES = [
     ],
   },
 ];
+
+const MODULE_TOOLTIPS: Record<string, { desc: string; badge?: string; badgeColor?: 'blue' | 'orange' }> = {
+  // Stage 1 Inputs & Target
+  CRM: {
+    desc: 'Synchronizes verified account hierarchies, opportunity history, and contact engagement into the core data layer.',
+    badge: 'Raw Stream',
+    badgeColor: 'blue',
+  },
+  'Website Activity': {
+    desc: 'Detects real-time visitor intent, high-value page surges, and anonymous account identification.',
+    badge: 'Intent Stream',
+    badgeColor: 'blue',
+  },
+  'Email Engagement': {
+    desc: 'Analyzes executive reply sentiment, open cadences, and multi-threaded communication frequency.',
+    badge: 'Activity Stream',
+    badgeColor: 'blue',
+  },
+  'Market Signals': {
+    desc: 'Surfaces leadership changes, funding events, earnings highlights, and expansion triggers automatically.',
+    badge: 'Market Signal',
+    badgeColor: 'blue',
+  },
+  'Customer Data': {
+    desc: 'Monitors product adoption, seat utilization, and renewal milestones to flag expansion opportunities.',
+    badge: 'Product Stream',
+    badgeColor: 'blue',
+  },
+  'Third-Party Data': {
+    desc: 'Enriches records with technographic stacks, firmographic verified criteria, and direct dial intelligence.',
+    badge: 'Enrichment',
+    badgeColor: 'blue',
+  },
+  'COMMERCIAL DATA LAYER': {
+    desc: 'Synthesizes all fragmented touchpoints into a single, validated source of truth for revenue teams.',
+    badge: 'Unified Core',
+    badgeColor: 'blue',
+  },
+
+  // Stage 2 Modular Blocks (AI Orchestration Core)
+  'Account Intelligence': {
+    desc: 'Maps corporate hierarchy, strategic growth initiatives, and active buying centers across target accounts.',
+    badge: 'Live Logic',
+    badgeColor: 'orange',
+  },
+  'Prospect Enrichment': {
+    desc: 'Validates buyer personas, operational responsibilities, and direct contact channels in real time.',
+    badge: 'Live Logic',
+    badgeColor: 'orange',
+  },
+  'Trigger Monitoring': {
+    desc: 'Flags verified commercial events to trigger timely, relevant executive outreach sequences.',
+    badge: 'Live Logic',
+    badgeColor: 'orange',
+  },
+  'Workflow Automation': {
+    desc: 'Automates task handoffs, CRM logging, and calendar scheduling without manual administrative burden.',
+    badge: 'Live Logic',
+    badgeColor: 'orange',
+  },
+  'Qualification Logic': {
+    desc: 'Filters accounts against rigorous commercial criteria to safeguard rep focus on high-conviction pipeline.',
+    badge: 'Live Logic',
+    badgeColor: 'orange',
+  },
+
+  // Stage 3 Workflow Steps
+  Research: {
+    desc: 'Gathers factual company context, competitive posture, and operational challenges prior to engagement.',
+    badge: 'Step 01',
+    badgeColor: 'blue',
+  },
+  Personalization: {
+    desc: 'Formulates tailored commercial hypotheses based on verified account observations and pain points.',
+    badge: 'Step 02',
+    badgeColor: 'blue',
+  },
+  Sequence: {
+    desc: 'Executes disciplined, multi-channel outreach cadences calibrated to executive communication norms.',
+    badge: 'Step 03',
+    badgeColor: 'blue',
+  },
+  Meeting: {
+    desc: 'Delivers structured executive discovery sessions focused on diagnosing root-cause business problems.',
+    badge: 'Step 04',
+    badgeColor: 'blue',
+  },
+  'Follow-Up': {
+    desc: 'Dispatches precise meeting recaps, agreed next steps, and updated commercial terms promptly.',
+    badge: 'Step 05',
+    badgeColor: 'blue',
+  },
+  Pipeline: {
+    desc: 'Advances qualified opportunities with customer-verified exit criteria and transparent health scoring.',
+    badge: 'Step 06',
+    badgeColor: 'blue',
+  },
+
+  // Stage 4 Signals
+  'Pipeline Health': {
+    desc: 'Tracks deal velocity and stage duration to expose stagnant opportunities before they slip quarters.',
+    badge: 'Telemetry',
+    badgeColor: 'blue',
+  },
+  'Stage Progression': {
+    desc: 'Enforces verified buyer commitments before advancing opportunities to subsequent sales stages.',
+    badge: 'Telemetry',
+    badgeColor: 'blue',
+  },
+  'Follow-Up Risk': {
+    desc: 'Flags unanswered buyer inquiries and stalled communications requiring proactive management intervention.',
+    badge: 'Telemetry',
+    badgeColor: 'blue',
+  },
+  'Account Activity': {
+    desc: 'Measures multi-threaded stakeholder depth across economic buyers, technical champions, and end users.',
+    badge: 'Telemetry',
+    badgeColor: 'blue',
+  },
+  'Forecast Discipline': {
+    desc: 'Replaces subjective rep optimism with evidence-weighted conversion probability calculations.',
+    badge: 'Telemetry',
+    badgeColor: 'blue',
+  },
+  'Win/Loss Signals': {
+    desc: 'Aggregates root-cause buyer feedback to continually refine ICP targeting and objection handling.',
+    badge: 'Telemetry',
+    badgeColor: 'blue',
+  },
+
+  // AI-Accelerated Tasks
+  'Account research': {
+    desc: 'Summarizes SEC filings, news releases, and executive statements into executive pre-call briefings.',
+    badge: 'AI Task',
+    badgeColor: 'blue',
+  },
+  'Contact data enrichment': {
+    desc: 'Verifies email deliverability and mobile contact numbers against fresh commercial databases.',
+    badge: 'AI Task',
+    badgeColor: 'blue',
+  },
+  'Company trigger monitoring': {
+    desc: 'Monitors corporate hiring surges, tech stack adoptions, and funding announcements 24/7.',
+    badge: 'AI Task',
+    badgeColor: 'blue',
+  },
+  'Meeting summaries': {
+    desc: 'Transcribes recorded conversations and extracts agreed action items directly into CRM records.',
+    badge: 'AI Task',
+    badgeColor: 'blue',
+  },
+  'CRM data hygiene': {
+    desc: 'Deduplicates records, standardizes job titles, and fixes incomplete contact profiles automatically.',
+    badge: 'AI Task',
+    badgeColor: 'blue',
+  },
+  'Draft follow-ups': {
+    desc: 'Generates structured follow-up drafts incorporating discussed nuances for rep review and approval.',
+    badge: 'AI Task',
+    badgeColor: 'blue',
+  },
+  'Pipeline hygiene': {
+    desc: 'Scans for expired close dates, missing contact roles, and inactive opportunities.',
+    badge: 'AI Task',
+    badgeColor: 'blue',
+  },
+  'Initial research notes': {
+    desc: 'Compiles industry trends, competitive benchmarks, and tech footprints for pre-meeting preparation.',
+    badge: 'AI Task',
+    badgeColor: 'blue',
+  },
+  'Market signal alerts': {
+    desc: 'Sends instant alerts when priority target accounts exhibit high-intent commercial behavior.',
+    badge: 'AI Task',
+    badgeColor: 'blue',
+  },
+  'Basic workflow automation': {
+    desc: 'Triggers notification sequences, task creations, and handoff alerts across revenue tools.',
+    badge: 'AI Task',
+    badgeColor: 'blue',
+  },
+
+  // Human Commercial Judgment
+  'Market selection': {
+    desc: 'Identifies which macroeconomic segments and geographies represent the highest-yield commercial opportunity.',
+    badge: 'Human Judgment',
+    badgeColor: 'orange',
+  },
+  'ICP decisions': {
+    desc: 'Sets strict boundary criteria defining high-conviction accounts that yield premium margins.',
+    badge: 'Human Judgment',
+    badgeColor: 'orange',
+  },
+  'Account prioritization': {
+    desc: 'Allocates limited executive and engineering bandwidth to the highest strategic-value pursuits.',
+    badge: 'Human Judgment',
+    badgeColor: 'orange',
+  },
+  'Executive messaging': {
+    desc: 'Crafts nuanced value narratives that directly address board-level priorities and risk mitigation.',
+    badge: 'Human Judgment',
+    badgeColor: 'orange',
+  },
+  Discovery: {
+    desc: 'Leads empathetic, probing dialogues to uncover underlying organizational friction and unstated needs.',
+    badge: 'Human Judgment',
+    badgeColor: 'orange',
+  },
+  Diagnosis: {
+    desc: 'Separates surface complaints from structural business bottlenecks to quantify the cost of inaction.',
+    badge: 'Human Judgment',
+    badgeColor: 'orange',
+  },
+  Qualification: {
+    desc: 'Enforces rigorous gate criteria to ensure organizational energy is not squandered on non-buyers.',
+    badge: 'Human Judgment',
+    badgeColor: 'orange',
+  },
+  'Business case development': {
+    desc: 'Collaboratively models economic impact, return on investment, and capital payback schedules.',
+    badge: 'Human Judgment',
+    badgeColor: 'orange',
+  },
+  'Solution alignment': {
+    desc: 'Tailors platform architecture and service scope to solve validated executive problems.',
+    badge: 'Human Judgment',
+    badgeColor: 'orange',
+  },
+  'Objection management': {
+    desc: 'Navigates security governance, legacy inertia, and internal political roadblocks constructively.',
+    badge: 'Human Judgment',
+    badgeColor: 'orange',
+  },
+  Negotiation: {
+    desc: 'Protects gross margins, payment terms, and reciprocal commitments through disciplined deal tradecraft.',
+    badge: 'Human Judgment',
+    badgeColor: 'orange',
+  },
+  Closing: {
+    desc: 'Aligns legal counsel, procurement committees, and executive signatories to secure binding agreements.',
+    badge: 'Human Judgment',
+    badgeColor: 'orange',
+  },
+  'Relationship management': {
+    desc: 'Cultivates executive sponsorship and long-term trust to ensure client satisfaction and advocacy.',
+    badge: 'Human Judgment',
+    badgeColor: 'orange',
+  },
+  'Expansion decisions': {
+    desc: 'Determines timing and scope for upsell and cross-division adoption based on proven customer outcomes.',
+    badge: 'Human Judgment',
+    badgeColor: 'orange',
+  },
+};
 
 export const RevOpsAiSection: React.FC = () => {
   const [activeStage, setActiveStage] = useState(0);
@@ -90,7 +345,7 @@ export const RevOpsAiSection: React.FC = () => {
         <div
           id="revops-ai-container"
           data-paused={isPaused}
-          className="bg-white border border-[#E8EAEE] rounded-2xl p-6 sm:p-8 lg:p-10 mb-14 shadow-sm transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:shadow-md hover:border-[#D6D9E0]"
+          className="bg-white border border-[#E8EAEE] rounded-2xl p-6 sm:p-8 lg:p-10 mb-14 shadow-sm transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:shadow-md hover:border-[#D6D9E0] relative"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
@@ -127,7 +382,7 @@ export const RevOpsAiSection: React.FC = () => {
           </div>
 
           {/* Dynamic Stage Body */}
-          <div className="py-8 min-h-[290px] flex flex-col justify-center relative overflow-hidden">
+          <div className="py-8 min-h-[290px] flex flex-col justify-center relative">
             
             {/* Stage 1: Connect the Data */}
             {activeStage === 0 && (
@@ -136,16 +391,25 @@ export const RevOpsAiSection: React.FC = () => {
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 relative z-10">
                   {currentStage.inputs?.map((inp, idx) => {
                     const floatClass = idx % 2 === 0 ? 'animate-sn-float-1' : 'animate-sn-float-2';
+                    const tooltipInfo = MODULE_TOOLTIPS[inp];
                     return (
-                      <div
+                      <GlassTooltip
                         key={inp}
-                        className={`bg-[#FAF9F6] border border-[#E8EAEE] p-3 rounded-xl text-center shadow-xs transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-white hover:border-[#BAC8FF] hover:shadow-sm ${floatClass}`}
-                        style={{ animationDelay: `${idx * 150}ms` }}
+                        title={inp}
+                        content={tooltipInfo?.desc || 'Live data ingestion feed.'}
+                        badge={tooltipInfo?.badge || 'Stream'}
+                        badgeColor={tooltipInfo?.badgeColor || 'blue'}
+                        position="top"
                       >
-                        <Database className="w-4 h-4 text-[#3B5BDB] mx-auto mb-1.5 animate-sn-glow" />
-                        <span className="text-xs font-bold text-[#22252B] block truncate">{inp}</span>
-                        <span className="text-[10px] text-[#7A8190]">Raw Stream</span>
-                      </div>
+                        <div
+                          className={`bg-[#FAF9F6] border border-[#E8EAEE] p-3 rounded-xl text-center shadow-xs transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-white hover:border-[#BAC8FF] hover:shadow-sm cursor-pointer ${floatClass}`}
+                          style={{ animationDelay: `${idx * 150}ms` }}
+                        >
+                          <Database className="w-4 h-4 text-[#3B5BDB] mx-auto mb-1.5 animate-sn-glow" />
+                          <span className="text-xs font-bold text-[#22252B] block truncate">{inp}</span>
+                          <span className="text-[10px] text-[#7A8190]">Raw Stream</span>
+                        </div>
+                      </GlassTooltip>
                     );
                   })}
                 </div>
@@ -188,16 +452,24 @@ export const RevOpsAiSection: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Unified Foundation Target Card */}
-                <div className="bg-[#EDF2FE] border border-[#BAC8FF] rounded-xl p-4 text-center shadow-sm animate-sn-float-3 relative overflow-hidden">
-                  <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#3B5BDB] to-transparent animate-sn-beam" />
-                  <span className="text-[11px] font-bold text-[#3B5BDB] uppercase tracking-wider block mb-0.5">
-                    Unified Foundation
-                  </span>
-                  <span className="text-base font-bold text-[#22252B]">
-                    {currentStage.target}
-                  </span>
-                </div>
+                {/* Unified Foundation Target Card with Tooltip */}
+                <GlassTooltip
+                  title={currentStage.target}
+                  content={MODULE_TOOLTIPS['COMMERCIAL DATA LAYER']?.desc || 'Unified revenue data foundation.'}
+                  badge="Foundation"
+                  badgeColor="blue"
+                  position="top"
+                >
+                  <div className="bg-[#EDF2FE] border border-[#BAC8FF] rounded-xl p-4 text-center shadow-sm animate-sn-float-3 relative overflow-hidden cursor-pointer hover:border-[#3B5BDB] transition-all">
+                    <div className="absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#3B5BDB] to-transparent animate-sn-beam" />
+                    <span className="text-[11px] font-bold text-[#3B5BDB] uppercase tracking-wider block mb-0.5">
+                      Unified Foundation
+                    </span>
+                    <span className="text-base font-bold text-[#22252B]">
+                      {currentStage.target}
+                    </span>
+                  </div>
+                </GlassTooltip>
               </div>
             )}
 
@@ -236,23 +508,32 @@ export const RevOpsAiSection: React.FC = () => {
                   </div>
                 </div>
 
-                {/* 5 Modular Blocks */}
+                {/* 5 Modular Blocks with GlassTooltips */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
                   {currentStage.blocks?.map((block, idx) => {
                     const floatClass = idx === 0 ? 'animate-sn-float-1' : idx === 1 ? 'animate-sn-float-2' : idx === 2 ? 'animate-sn-float-3' : idx === 3 ? 'animate-sn-float-4' : 'animate-sn-float-subtle';
+                    const tooltipInfo = MODULE_TOOLTIPS[block];
                     return (
-                      <div
+                      <GlassTooltip
                         key={block}
-                        className={`bg-[#FAF9F6] border border-[#E8EAEE] p-3.5 rounded-xl text-center shadow-xs transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-white hover:border-[#FFD8BF] hover:shadow-md hover:scale-[1.02] relative overflow-hidden ${floatClass}`}
-                        style={{ animationDelay: `${idx * 120}ms` }}
+                        title={block}
+                        content={tooltipInfo?.desc || 'AI orchestration module executing continuous commercial logic.'}
+                        badge={tooltipInfo?.badge || 'Live Logic'}
+                        badgeColor={tooltipInfo?.badgeColor || 'orange'}
+                        position="top"
                       >
-                        <div className="absolute top-1 right-2 flex items-center gap-1">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#FF8A3D] animate-ping" />
+                        <div
+                          className={`bg-[#FAF9F6] border border-[#E8EAEE] p-3.5 rounded-xl text-center shadow-xs transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-white hover:border-[#FFD8BF] hover:shadow-md hover:scale-[1.02] relative overflow-hidden cursor-pointer ${floatClass}`}
+                          style={{ animationDelay: `${idx * 120}ms` }}
+                        >
+                          <div className="absolute top-1 right-2 flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#FF8A3D] animate-ping" />
+                          </div>
+                          <Sparkles className="w-4 h-4 text-[#FF8A3D] mx-auto mb-1.5" />
+                          <span className="text-xs font-bold text-[#22252B] block">{block}</span>
+                          <span className="text-[10px] text-[#5F6673] mt-1 block">Live Logic</span>
                         </div>
-                        <Sparkles className="w-4 h-4 text-[#FF8A3D] mx-auto mb-1.5" />
-                        <span className="text-xs font-bold text-[#22252B] block">{block}</span>
-                        <span className="text-[10px] text-[#5F6673] mt-1 block">Live Logic</span>
-                      </div>
+                      </GlassTooltip>
                     );
                   })}
                 </div>
@@ -265,17 +546,28 @@ export const RevOpsAiSection: React.FC = () => {
                 <div className="flex items-center gap-2 overflow-x-auto pb-3 pt-1">
                   {currentStage.workflow?.map((step, idx) => {
                     const floatClass = idx % 2 === 0 ? 'animate-sn-float-1' : 'animate-sn-float-2';
+                    const tooltipInfo = MODULE_TOOLTIPS[step];
                     return (
                       <React.Fragment key={step}>
-                        <div
-                          className={`flex-1 min-w-[125px] bg-[#FAF9F6] border border-[#E8EAEE] p-3.5 rounded-xl text-center transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-white hover:border-[#3B5BDB] hover:shadow-sm relative overflow-hidden ${floatClass}`}
-                          style={{ animationDelay: `${idx * 100}ms` }}
-                        >
-                          <div className="flex items-center justify-between mb-1">
-                            <span className="text-[10px] font-mono text-[#7A8190]">STEP 0{idx + 1}</span>
-                            <span className="w-1.5 h-1.5 rounded-full bg-[#3B5BDB] animate-pulse" />
-                          </div>
-                          <span className="text-xs font-bold text-[#22252B] mt-0.5 block">{step}</span>
+                        <div className="flex-1 min-w-[125px]">
+                          <GlassTooltip
+                            title={step}
+                            content={tooltipInfo?.desc || 'Commercial milestone progression step.'}
+                            badge={tooltipInfo?.badge || `Step 0${idx + 1}`}
+                            badgeColor={tooltipInfo?.badgeColor || 'blue'}
+                            position="top"
+                          >
+                            <div
+                              className={`w-full bg-[#FAF9F6] border border-[#E8EAEE] p-3.5 rounded-xl text-center transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-white hover:border-[#3B5BDB] hover:shadow-sm relative overflow-hidden cursor-pointer ${floatClass}`}
+                              style={{ animationDelay: `${idx * 100}ms` }}
+                            >
+                              <div className="flex items-center justify-between mb-1">
+                                <span className="text-[10px] font-mono text-[#7A8190]">STEP 0{idx + 1}</span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#3B5BDB] animate-pulse" />
+                              </div>
+                              <span className="text-xs font-bold text-[#22252B] mt-0.5 block">{step}</span>
+                            </div>
+                          </GlassTooltip>
                         </div>
 
                         {/* Interactive Connector with Active Flow Pulse */}
@@ -323,19 +615,28 @@ export const RevOpsAiSection: React.FC = () => {
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
                   {currentStage.signals?.map((sig, idx) => {
                     const floatClass = idx % 2 === 0 ? 'animate-sn-float-subtle' : 'animate-sn-float-3';
+                    const tooltipInfo = MODULE_TOOLTIPS[sig];
                     return (
-                      <div
+                      <GlassTooltip
                         key={sig}
-                        className={`bg-[#FAF9F6] border border-[#E8EAEE] p-3.5 rounded-xl text-center shadow-xs transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-white hover:border-[#BAC8FF] hover:shadow-sm relative overflow-hidden ${floatClass}`}
-                        style={{ animationDelay: `${idx * 100}ms` }}
+                        title={sig}
+                        content={tooltipInfo?.desc || 'Real-time telemetry verification signal.'}
+                        badge={tooltipInfo?.badge || 'Telemetry'}
+                        badgeColor={tooltipInfo?.badgeColor || 'blue'}
+                        position="top"
                       >
-                        <div className="absolute top-1.5 right-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[#3B5BDB] inline-block animate-pulse" />
+                        <div
+                          className={`bg-[#FAF9F6] border border-[#E8EAEE] p-3.5 rounded-xl text-center shadow-xs transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] hover:bg-white hover:border-[#BAC8FF] hover:shadow-sm relative overflow-hidden cursor-pointer ${floatClass}`}
+                          style={{ animationDelay: `${idx * 100}ms` }}
+                        >
+                          <div className="absolute top-1.5 right-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-[#3B5BDB] inline-block animate-pulse" />
+                          </div>
+                          <Activity className="w-4 h-4 text-[#3B5BDB] mx-auto mb-1.5 animate-sn-glow" />
+                          <span className="text-xs font-bold text-[#22252B] block">{sig}</span>
+                          <span className="text-[10px] text-[#5F6673] mt-1 block">Verifiable Status</span>
                         </div>
-                        <Activity className="w-4 h-4 text-[#3B5BDB] mx-auto mb-1.5 animate-sn-glow" />
-                        <span className="text-xs font-bold text-[#22252B] block">{sig}</span>
-                        <span className="text-[10px] text-[#5F6673] mt-1 block">Verifiable Status</span>
-                      </div>
+                      </GlassTooltip>
                     );
                   })}
                 </div>
@@ -346,7 +647,7 @@ export const RevOpsAiSection: React.FC = () => {
 
           <div className="pt-4 border-t border-[#E8EAEE] text-center">
             <span className="text-xs text-[#7A8190] italic">
-              Structured commercial workflows and verified CRM governance without manufactured charts.
+              Structured commercial workflows and verified CRM governance without manufactured charts. Hover over any block for operational details.
             </span>
           </div>
         </div>
@@ -372,15 +673,24 @@ export const RevOpsAiSection: React.FC = () => {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {AI_ACCELERATED_TASKS.map((task) => (
-                  <div
-                    key={task}
-                    className="p-2.5 rounded-lg bg-[#FAF9F6] border border-[#E8EAEE] text-xs font-medium text-[#22252B] flex items-center gap-2 transition-all duration-200 hover:bg-white hover:border-[#BAC8FF] hover:-translate-y-0.5"
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#3B5BDB]" />
-                    <span className="truncate">{task}</span>
-                  </div>
-                ))}
+                {AI_ACCELERATED_TASKS.map((task) => {
+                  const tooltipInfo = MODULE_TOOLTIPS[task];
+                  return (
+                    <GlassTooltip
+                      key={task}
+                      title={task}
+                      content={tooltipInfo?.desc || 'Automated AI acceleration task.'}
+                      badge="AI Task"
+                      badgeColor="blue"
+                      position="top"
+                    >
+                      <div className="p-2.5 rounded-lg bg-[#FAF9F6] border border-[#E8EAEE] text-xs font-medium text-[#22252B] flex items-center gap-2 transition-all duration-200 hover:bg-white hover:border-[#BAC8FF] hover:-translate-y-0.5 cursor-pointer">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#3B5BDB] flex-shrink-0" />
+                        <span className="truncate">{task}</span>
+                      </div>
+                    </GlassTooltip>
+                  );
+                })}
               </div>
             </div>
 
@@ -409,15 +719,24 @@ export const RevOpsAiSection: React.FC = () => {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {HUMAL_TASKS_SAFE.map((task) => (
-                  <div
-                    key={task}
-                    className="p-2.5 rounded-lg bg-[#FAF9F6] border border-[#E8EAEE] text-xs font-medium text-[#22252B] flex items-center gap-2 transition-all duration-200 hover:bg-white hover:border-[#FFD8BF] hover:-translate-y-0.5"
-                  >
-                    <span className="w-1.5 h-1.5 rounded-full bg-[#FF8A3D]" />
-                    <span className="truncate">{task}</span>
-                  </div>
-                ))}
+                {HUMAL_TASKS_SAFE.map((task) => {
+                  const tooltipInfo = MODULE_TOOLTIPS[task];
+                  return (
+                    <GlassTooltip
+                      key={task}
+                      title={task}
+                      content={tooltipInfo?.desc || 'Strategic human commercial responsibility.'}
+                      badge="Judgment"
+                      badgeColor="orange"
+                      position="top"
+                    >
+                      <div className="p-2.5 rounded-lg bg-[#FAF9F6] border border-[#E8EAEE] text-xs font-medium text-[#22252B] flex items-center gap-2 transition-all duration-200 hover:bg-white hover:border-[#FFD8BF] hover:-translate-y-0.5 cursor-pointer">
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#FF8A3D] flex-shrink-0" />
+                        <span className="truncate">{task}</span>
+                      </div>
+                    </GlassTooltip>
+                  );
+                })}
               </div>
             </div>
 
@@ -458,3 +777,4 @@ const HUMAL_TASKS_SAFE = [
   'Relationship management',
   'Expansion decisions',
 ];
+
